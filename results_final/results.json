@@ -1,0 +1,67 @@
+{
+  "baseline": "paper trust-decay, k's+tau tuned on calibration people",
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "n_people": 91,
+  "improvement_vs_tuned_baseline_pct": {
+    "cusum, face only (skip failures)": {
+      "mean": 28.1,
+      "min": 23.1,
+      "max": 31.5,
+      "seed0_ci": "[26.2, 32.8]"
+    },
+    "cusum, fused + failure flag only": {
+      "mean": 49.3,
+      "min": 47.0,
+      "max": 51.9,
+      "seed0_ci": "[44.1, 49.9]"
+    },
+    "cusum, fused + quality (proposed)": {
+      "mean": 50.5,
+      "min": 49.4,
+      "max": 52.5,
+      "seed0_ci": "[46.8, 52.5]"
+    }
+  },
+  "methods": {
+    "Periodic face check (k=2)": {
+      "delay_s": 116.1,
+      "false_alarms_per_h": 0.091,
+      "missed_rate": 0.082
+    },
+    "Paper method, tau calibrated": {
+      "delay_s": 99.8,
+      "false_alarms_per_h": 0.154,
+      "missed_rate": 0.005
+    },
+    "Paper method, tuned (baseline)": {
+      "delay_s": 76.7,
+      "false_alarms_per_h": 0.145,
+      "missed_rate": 0.008
+    },
+    "Ours: face only": {
+      "delay_s": 54.9,
+      "false_alarms_per_h": 0.19,
+      "missed_rate": 0.0
+    },
+    "Ours: + voice & failure flag": {
+      "delay_s": 38.9,
+      "false_alarms_per_h": 0.199,
+      "missed_rate": 0.0
+    },
+    "Ours: + quality (proposed)": {
+      "delay_s": 38.0,
+      "false_alarms_per_h": 0.169,
+      "missed_rate": 0.0
+    }
+  },
+  "quality_effect_seconds_per_seed": [
+    2.15,
+    2.53,
+    -2.01
+  ],
+  "note_as_published_false_alarms_per_h": 17.1
+}

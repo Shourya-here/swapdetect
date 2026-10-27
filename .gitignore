@@ -1,0 +1,13 @@
+.venv*/
+__pycache__/
+*.pyc
+.DS_Store
+*.zip
+# raw data and feature caches: large, and may have licence limits
+data/*
+!data/.gitkeep
+features_cache*/
+old_run_*/
+*.bak
+cv_s*.txt
+results_final/results_cv_persons*.csv

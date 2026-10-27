@@ -1,0 +1,12 @@
+method,n_people,mean_delay_minus_proposed_s,ci,pct_people_proposed_faster
+"cusum, face only (skip failures)",91,14.505494505494505,"[12.8, 16.4]",100.0
+"cusum, fused + failure flag only",91,-2.0054945054945055,"[-3.5, -0.7]",30.76923076923077
+"cusum, fused no quality",91,19.96153846153846,"[17.6, 22.0]",98.9010989010989
+"paper trust-decay, as published (tau=0.5)",91,-14.285714285714286,"[-17.2, -11.7]",7.6923076923076925
+"paper trust-decay, k's+tau tuned on calibration people",91,39.96450213013681,"[35.9, 44.0]",98.9010989010989
+"paper trust-decay, tau calibrated",91,60.677719940877836,"[56.9, 64.7]",100.0
+periodic k=1 (skip failures),91,84.43986052986921,"[72.6, 96.8]",94.5054945054945
+periodic k=2 (skip failures),91,73.53723884965592,"[63.4, 84.1]",97.8021978021978
+periodic k=3 (skip failures),91,25.211572955768002,"[18.2, 32.8]",79.12087912087912
+trust_decay lam=0.5 (skip),91,30.83488888132851,"[25.9, 36.4]",96.7032967032967
+trust_decay lam=0.8 (skip),91,46.87738577212262,"[44.6, 49.3]",100.0

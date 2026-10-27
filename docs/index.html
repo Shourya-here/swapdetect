@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Swapdetect: catching a swapped candidate faster</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;700&family=Public+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f2f5f7;--surface:#ffffff;--ink:#16283a;--muted:#55667a;--line:#d5dde4;--ours:#0b7a75;--base:#b5832f;--grey:#98a4b1;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101a24;--surface:#17232f;--ink:#e6edf3;--muted:#9fb0c1;--line:#2a3a4a;--ours:#3cc4bb;--base:#e0a954;--grey:#6d7c8b}}
+:root[data-theme="dark"]{--bg:#101a24;--surface:#17232f;--ink:#e6edf3;--muted:#9fb0c1;--line:#2a3a4a;--ours:#3cc4bb;--base:#e0a954;--grey:#6d7c8b}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.6 "Public Sans",system-ui,sans-serif}
+main{max-width:860px;margin:0 auto;padding:40px 20px 72px}
+h1,h2{font-family:Spectral,Georgia,serif;line-height:1.15;margin:0}
+h1{font-size:clamp(2rem,6vw,3.2rem);font-weight:700;letter-spacing:-.01em}
+h2{font-size:1.6rem;margin:56px 0 14px}
+p{max-width:68ch;margin:0 0 14px}
+.lede{font-size:1.15rem;color:var(--muted);margin-top:16px}
+.race{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:22px 20px;margin-top:28px}
+.row{display:grid;grid-template-columns:minmax(120px,210px) 1fr;gap:12px;align-items:center;margin:9px 0;font-size:.94rem}
+.bar{height:24px;border-radius:3px;background:var(--grey);position:relative;min-width:2px}
+.bar.b{background:var(--base)}.bar.o{background:var(--ours)}
+.bar span{position:absolute;left:calc(100% + 8px);top:50%;transform:translateY(-50%);font-weight:600;white-space:nowrap}
+.track{padding-right:70px}
+.note{font-size:.85rem;color:var(--muted);margin:12px 0 0}
+.tw{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:.93rem}
+th,td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--line)}
+th{font-weight:600;color:var(--muted)}tr:last-child td{border-bottom:0}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+tr.hi td{font-weight:600;color:var(--ours)}
+.chg{display:grid;gap:14px}
+.chg div{border-left:4px solid var(--ours);padding:2px 0 2px 16px}
+.chg b{display:block}
+.claim{border:2px solid var(--ours);border-radius:10px;padding:18px 20px;background:var(--surface)}
+ul{padding-left:20px;max-width:68ch}li{margin:6px 0}
+a{color:var(--ours)}
+footer{margin-top:56px;color:var(--muted);font-size:.85rem}
+</style>
+</head>
+<body>
+<main>
+<h1>A swapped candidate caught in 38 seconds, not 77</h1>
+<p class="lede">Online interviews and exams usually check a face once, at login. Swapdetect keeps checking during the session. On simulated webcam problems with 91 actors, it flagged a swap about 50% faster than a tuned version of a 2026 published method, at similar false-alarm rates.</p>
+
+<div class="race" role="img" aria-label="Bar chart of mean detection delay in seconds. Tuned paper baseline 76.7, proposed method 38.0.">
+<div class="row"><div>Tuned paper baseline</div><div class="track"><div class="bar b" style="width:63.9%"><span>76.7 s</span></div></div></div>
+<div class="row"><div>Swapdetect (proposed)</div><div class="track"><div class="bar o" style="width:31.7%"><span>38.0 s</span></div></div></div>
+<p class="note">Mean time from the swap to the alarm, over 91 people and 3 random seeds. Lower is better. Login-only checking never detects a swap.</p>
+</div>
+
+<h2>The problem</h2>
+<p>A person can log in as the candidate and then hand the seat to someone else. A login-only check never notices. Checking the face every few seconds helps, but real webcams fail often: poor light, a turned head, a missing face. A system that treats every failed check as suspicious raises too many false alarms, and one that ignores failures reacts slowly.</p>
+
+<h2>The reference paper</h2>
+<p>We compare against <em>Continuous Face Authentication on Mobile and Desktop Platforms: A Comparative Study</em> by Palmetshofer, Findling and Kurz (arXiv 2608.00763). It keeps a trust score that decays over time and drops to zero when no face is seen, then locks when trust falls below a threshold. We reimplemented its equations on the same features and the same people as our method, so any difference comes from the method, not a stronger face model. This is our reimplementation, not the authors' own system or data.</p>
+
+<h2>What we changed</h2>
+<div class="chg">
+<div><b>Decision rule</b>A change detector (CUSUM) calibrated to a false-alarm target replaces a fixed trust threshold.</div>
+<div><b>Evidence</b>Face and voice are fused with learned weights, instead of a face-only score.</div>
+<div><b>Failure handling</b>A "face found" signal lets the system treat a missing face as missing evidence, not as an impostor.</div>
+</div>
+
+<h2>Results</h2>
+<div class="tw"><table>
+<thead><tr><th>Method</th><th class="n">Delay (s)</th><th class="n">False alarms / h</th><th class="n">Swaps missed</th></tr></thead>
+<tbody>
+<tr><td>Periodic face check (every 2 checks)</td><td class="n">116.1</td><td class="n">0.091</td><td class="n">8.2%</td></tr>
+<tr><td>Paper method, threshold calibrated</td><td class="n">99.8</td><td class="n">0.154</td><td class="n">0.5%</td></tr>
+<tr><td>Paper method, tuned (baseline)</td><td class="n">76.7</td><td class="n">0.145</td><td class="n">0.8%</td></tr>
+<tr><td>Ours: face only</td><td class="n">54.9</td><td class="n">0.190</td><td class="n">0%</td></tr>
+<tr><td>Ours: + voice and failure flag</td><td class="n">38.9</td><td class="n">0.199</td><td class="n">0%</td></tr>
+<tr class="hi"><td>Ours: + quality (proposed)</td><td class="n">38.0</td><td class="n">0.169</td><td class="n">0%</td></tr>
+</tbody></table></div>
+<p class="note">Mean of 3 seeds, 91 people, 5-fold cross-validation with each person tested once. The login-only method detects no swaps.</p>
+
+<h2>How much faster</h2>
+<div class="race" role="img" aria-label="Percent faster than the tuned baseline: face only 28.1, plus voice and failure flag 49.3, proposed 50.5.">
+<div class="row"><div>Face only</div><div class="track"><div class="bar o" style="width:48%"><span>28.1%</span></div></div></div>
+<div class="row"><div>+ voice and failure flag</div><div class="track"><div class="bar o" style="width:84.2%"><span>49.3%</span></div></div></div>
+<div class="row"><div>+ quality (proposed)</div><div class="track"><div class="bar o" style="width:86.3%"><span>50.5%</span></div></div></div>
+<p class="note">Faster than the tuned baseline, mean over 3 seeds. The proposed method ranged from 49.4% to 52.5%. On seed 0 the 95% interval was 46.8% to 52.5%.</p>
+</div>
+
+<h2>What we claim</h2>
+<div class="claim"><p style="margin:0">Against a reimplementation of the temporal-decay authenticator of Palmetshofer et al. (2026), tuned on calibration people, our method detected swaps about 50% faster (mean 50.5%, range 49.4 to 52.5 across 3 seeds), at comparable false-alarm rates (0.169 vs 0.145 per hour), on simulated webcam degradation with 91 acted studio people.</p></div>
+
+<h2>What we do not claim</h2>
+<ul>
+<li><b>The quality score is not shown to help.</b> Adding it changed delay by +2.2 s, +2.5 s and −2.0 s across the three seeds, so the sign flips. Most of the gain comes from voice fusion and the failure flag, which we tested together.</li>
+<li><b>False alarms are close but not equal.</b> Ours average 0.169 per hour and the tuned baseline 0.145.</li>
+<li><b>The baseline's decay setting often hit the top of our search range</b> (6000 s, which is almost no decay). We treat that as its strongest form.</li>
+<li><b>Not tested:</b> real exams, real webcams, photo or replay attacks, and attackers who try to avoid detection. The data is acted studio clips with simulated degradation.</li>
+<li>The paper's own published settings give about 17 false alarms per hour on our data, so its threshold has to be recalibrated for new data.</li>
+</ul>
+
+<footer>Numbers come from results.json, generated from the project's cross-validation outputs. Reference: arXiv 2608.00763.</footer>
+</main>
+</body>
+</html>

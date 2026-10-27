@@ -1,0 +1,10 @@
+baseline,ours,n_people,baseline_delay_s,ours_delay_s,pct_faster,ci
+"paper trust-decay, as published (tau=0.5)","cusum, face only (skip failures)",91,26.725274725274726,54.03846153846154,-102.1998355263158,"[-119.5, -87.8]"
+"paper trust-decay, as published (tau=0.5)","cusum, fused + failure flag only",91,26.725274725274726,35.90659340659341,-34.35444078947369,"[-43.3, -26.5]"
+"paper trust-decay, as published (tau=0.5)","cusum, fused + quality (proposed)",91,26.725274725274726,33.379120879120876,-24.897203947368407,"[-33.2, -17.8]"
+"paper trust-decay, tau calibrated","cusum, face only (skip failures)",91,97.02568071763116,54.03846153846154,44.30499107166598,"[40.4, 47.3]"
+"paper trust-decay, tau calibrated","cusum, fused + failure flag only",91,97.02568071763116,35.90659340659341,62.99269106795498,"[61.3, 64.6]"
+"paper trust-decay, tau calibrated","cusum, fused + quality (proposed)",91,97.02568071763116,33.379120879120876,65.5976431886498,"[64.0, 67.0]"
+"paper trust-decay, k's+tau tuned on calibration people","cusum, face only (skip failures)",91,70.2605953987533,54.03846153846154,23.08852318746448,"[17.0, 28.0]"
+"paper trust-decay, k's+tau tuned on calibration people","cusum, fused + failure flag only",91,70.2605953987533,35.90659340659341,48.89511937265687,"[45.2, 52.4]"
+"paper trust-decay, k's+tau tuned on calibration people","cusum, fused + quality (proposed)",91,70.2605953987533,33.379120879120876,52.49240247725946,"[49.4, 55.4]"
